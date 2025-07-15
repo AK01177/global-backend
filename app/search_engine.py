@@ -1,59 +1,35 @@
 import requests
-from googlesearch import search
-import time
-from flask import current_app
-import random
+
+GNEWS_API_KEY = "2956b43752822d6237d21b42052fb001"
+
+def fetch_gnews(location, max_results=10):
+    url = "https://gnews.io/api/v4/search"
+    params = {
+        "q": location,
+        "token": GNEWS_API_KEY,
+        "lang": "en",
+        "max": max_results
+    }
+    response = requests.get(url, params=params)
+    data = response.json()
+    articles = []
+    for article in data.get("articles", []):
+        articles.append({
+            "url": article["url"],
+            "content": article.get("description", "") or article.get("content", ""),
+            "query": location
+        })
+    return articles
 
 def search_news(location_name, max_results=10):
     """
-    Search for news articles about a specific location
-    Uses Google search with news-specific queries
+    Search for news articles about a specific location using GNews API
     """
     try:
-        # Create search queries for news
-        queries = [
-            f"{location_name} news today",
-            f"{location_name} latest news",
-            f"{location_name} current events",
-            f"breaking news {location_name}",
-            f"{location_name} recent developments"
-        ]
-        
-        articles = []
-        
-        for query in queries:
-            try:
-                # Use googlesearch library with news domain preference
-                search_results = search(query)
-                
-                for url in list(search_results)[:max_results // len(queries) + 1]:
-                    # Filter for news websites
-                    if is_news_website(url):
-                        article_content = scrape_article_content(url)
-                        if article_content:
-                            articles.append({
-                                'url': url,
-                                'content': article_content,
-                                'query': query
-                            })
-                            
-                    if len(articles) >= max_results:
-                        break
-                
-                # Add delay between queries
-                time.sleep(random.uniform(1, 3))
-                
-            except Exception as e:
-                current_app.logger.error(f"Error searching for query '{query}': {str(e)}")
-                continue
-                
-            if len(articles) >= max_results:
-                break
-        
-        return articles[:max_results]
-        
+        return fetch_gnews(location_name, max_results)
     except Exception as e:
-        current_app.logger.error(f"Error in search_news: {str(e)}")
+        from flask import current_app
+        current_app.logger.error(f"Error in GNews search: {str(e)}")
         return []
 
 def is_news_website(url):
@@ -113,6 +89,7 @@ def scrape_article_content(url):
             return f"Title: {title}\n\nContent extraction failed for this article."
         
     except Exception as e:
+        from flask import current_app
         current_app.logger.error(f"Error scraping article {url}: {str(e)}")
         return None
 
@@ -155,5 +132,6 @@ def search_with_custom_api(location_name):
         return articles
         
     except Exception as e:
+        from flask import current_app
         current_app.logger.error(f"Error in custom search: {str(e)}")
         return []
