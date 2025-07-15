@@ -10,7 +10,7 @@ def create_app():
     app = Flask(__name__)
     
     # Enable CORS for all domains and routes
-    CORS(app, origins="*")
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
     
     # Configuration
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
