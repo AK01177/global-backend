@@ -12,6 +12,9 @@ def fetch_gnews(location, max_results=10):
     }
     response = requests.get(url, params=params)
     data = response.json()
+    # Add logging for debugging
+    from flask import current_app
+    current_app.logger.info(f"GNews API response for '{location}': {data}")
     articles = []
     for article in data.get("articles", []):
         articles.append({
@@ -19,6 +22,8 @@ def fetch_gnews(location, max_results=10):
             "content": article.get("description", "") or article.get("content", ""),
             "query": location
         })
+    if not articles:
+        current_app.logger.warning(f"No articles found in GNews response for '{location}'. Full response: {data}")
     return articles
 
 def search_news(location_name, max_results=10):
