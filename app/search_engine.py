@@ -26,7 +26,6 @@ def search_news(location_name, max_results=10):
                 # Use googlesearch library with news domain preference
                 search_results = search(
                     query,
-                    num=max_results // len(queries) + 1,
                     stop=max_results // len(queries) + 1,
                     pause=2,
                     user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
