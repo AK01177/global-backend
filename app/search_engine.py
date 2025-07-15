@@ -26,12 +26,11 @@ def search_news(location_name, max_results=10):
                 # Use googlesearch library with news domain preference
                 search_results = search(
                     query,
-                    stop=max_results // len(queries) + 1,
                     pause=2,
                     user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
                 )
                 
-                for url in search_results:
+                for url in list(search_results)[:max_results // len(queries) + 1]:
                     # Filter for news websites
                     if is_news_website(url):
                         article_content = scrape_article_content(url)
