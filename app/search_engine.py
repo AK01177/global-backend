@@ -24,11 +24,7 @@ def search_news(location_name, max_results=10):
         for query in queries:
             try:
                 # Use googlesearch library with news domain preference
-                search_results = search(
-                    query,
-                    pause=2,
-                    user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-                )
+                search_results = search(query)
                 
                 for url in list(search_results)[:max_results // len(queries) + 1]:
                     # Filter for news websites
