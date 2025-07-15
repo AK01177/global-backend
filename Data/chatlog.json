@@ -1,0 +1,11 @@
+[
+    {
+      "timestamp": "2025-01-01T12:00:00.000Z",
+      "coordinates": {
+        "lat": 40.7128,
+        "lng": -74.0060
+      },
+      "location": "New York, New York, United States",
+      "summary": "Sample news summary for New York showing recent developments in the city..."
+    }
+  ]
