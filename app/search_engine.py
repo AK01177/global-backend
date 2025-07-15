@@ -2,10 +2,14 @@ import requests
 
 GNEWS_API_KEY = "2956b43752822d6237d21b42052fb001"
 
+def sanitize_query(location):
+    # Remove commas and extra spaces
+    return ' '.join(location.replace(',', ' ').split())
+
 def fetch_gnews(location, max_results=10):
     url = "https://gnews.io/api/v4/search"
     params = {
-        "q": location,
+        "q": sanitize_query(location),
         "token": GNEWS_API_KEY,
         "lang": "en",
         "max": max_results
